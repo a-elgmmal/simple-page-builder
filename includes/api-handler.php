@@ -70,6 +70,8 @@ class SimplePageBuilder_API {
         // 7. Rate Limit Check
         $rate_limit = (int) get_option('spb_rate_limit', 100);
         if ($this->is_rate_limited($key_record->id, $rate_limit)) {
+            // Log the rate limit error
+            $this->log_request($key_record, '/create-pages', 'FAILED', 429, 0, microtime(true), 'Rate limit exceeded');
             return new WP_Error('rate_limit', 'Rate limit exceeded', ['status' => 429]);
         }
 
@@ -220,11 +222,18 @@ class SimplePageBuilder_API {
     private function is_rate_limited($key_id, $limit) {
         global $wpdb;
         $table = $wpdb->prefix . 'spb_api_logs';
+        // Calculate one hour ago using WordPress timezone
+        $current_time = current_time('mysql');
+        $one_hour_ago = date('Y-m-d H:i:s', strtotime($current_time) - 3600);
+        
+        // Count all requests (SUCCESS and FAILED) in the last hour for this key
         $count = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $table WHERE api_key_id = %d AND created_at > %s",
+            "SELECT COUNT(*) FROM $table WHERE api_key_id = %d AND created_at >= %s",
             $key_id,
-            date('Y-m-d H:i:s', strtotime('-1 hour'))
+            $one_hour_ago
         ));
+        
+        // If count >= limit, block the request (this would be the limit+1 request)
         return $count >= $limit;
     }
 

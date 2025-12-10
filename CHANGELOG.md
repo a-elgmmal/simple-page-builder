@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2025-12-10
+
+### Fixed
+- Fixed rate limiting not working correctly - now properly blocks requests when limit is exceeded
+- Fixed timezone mismatch in rate limit check (now uses WordPress timezone consistently)
+- Fixed rate limit check time comparison (changed from > to >= for accurate boundary checking)
+- Fixed rate limit errors not being logged - now logs 429 errors for monitoring
+- Fixed expired keys showing regenerate button - now only REVOKED keys can be regenerated
+- Fixed regenerate modal not displaying new API key - now properly shows modal with copy functionality
+- Fixed regenerate response handling - corrected response data structure parsing
+
+### Changed
+- Updated version to 1.0.4
+- Rate limiting now properly returns 429 status code and prevents page creation when limit exceeded
+- Regenerate functionality now preserves expiration date, created date, and last used date correctly
+
 ## [1.0.3] - 2025-12-10
 
 ### Fixed
