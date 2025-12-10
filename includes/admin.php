@@ -10,6 +10,7 @@ class SimplePageBuilder_Admin {
         add_action('wp_ajax_spb_get_keys', [$this, 'handle_get_keys']);
         add_action('wp_ajax_spb_generate_key', [$this, 'handle_generate_key']);
         add_action('wp_ajax_spb_revoke_key', [$this, 'handle_revoke_key']);
+        add_action('wp_ajax_spb_delete_key', [$this, 'handle_delete_key']);
         add_action('wp_ajax_spb_get_key_details', [$this, 'handle_get_key_details']);
         add_action('wp_ajax_spb_get_logs', [$this, 'handle_get_logs']);
         add_action('wp_ajax_spb_export_logs_csv', [$this, 'handle_export_logs_csv']);
@@ -154,14 +155,15 @@ class SimplePageBuilder_Admin {
                 </div>
                 <table id="spb-keys-table" class="spb-table">
                     <thead>
-                        <tr>
-                            <th>Key Name</th>
-                            <th>Token Preview</th>
-                            <th>Created</th>
-                            <th>Last Used</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
+                    <tr>
+                        <th>Key Name</th>
+                        <th>Token Preview</th>
+                        <th>Created</th>
+                        <th>Expires</th>
+                        <th>Last Used</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
                         <tr>
@@ -492,10 +494,17 @@ if (hash_equals($signature, $computed)) {
         $prefix = substr($key, 0, 8);
         $hash = wp_hash_password($key);
 
-        // Calculate expiration date if provided
+        // Calculate expiration date
         $expires_at = null;
         if ($expiration) {
+            // Use provided expiration date
             $expires_at = date('Y-m-d H:i:s', strtotime($expiration));
+        } else {
+            // Use default expiration from settings if no date provided
+            $expiration_default = get_option('spb_key_expiration_default', 'never');
+            if ($expiration_default !== 'never') {
+                $expires_at = date('Y-m-d H:i:s', strtotime('+' . intval($expiration_default) . ' days'));
+            }
         }
 
         global $wpdb;
@@ -548,6 +557,10 @@ if (hash_equals($signature, $computed)) {
         if (!$key) {
             wp_send_json_error('Key not found', 404);
         }
+
+        // Ensure all fields are present
+        $key->expires_at = $key->expires_at ? $key->expires_at : null;
+        $key->last_used = $key->last_used ? $key->last_used : null;
 
         wp_send_json_success($key);
     }

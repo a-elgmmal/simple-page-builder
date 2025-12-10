@@ -69,6 +69,9 @@
             // Revoke Key
             $(document).on('click', '.spb-revoke-key', this.handleRevokeKey);
             
+            // Delete Key
+            $(document).on('click', '.spb-delete-key', this.handleDeleteKey);
+            
             // Save Settings
             $(document).on('submit', '#spb-settings-form', this.handleSaveSettings);
             
@@ -226,6 +229,24 @@
                 SPB.loadApiKeys();
             });
         },
+        
+        // Delete Key
+        handleDeleteKey: function(e) {
+            e.preventDefault();
+            
+            if (!confirm('Are you sure you want to permanently delete this API key? This action cannot be undone.')) {
+                return;
+            }
+
+            const keyId = $(this).data('key-id');
+            
+            SPB.ajax('spb_delete_key', {
+                id: keyId
+            }, function() {
+                SPB.showAlert('success', 'API key deleted successfully');
+                SPB.loadApiKeys();
+            });
+        },
 
         // Save Settings
         handleSaveSettings: function(e) {
@@ -309,6 +330,9 @@
 
         // Show Key Details
         showKeyDetails: function(data) {
+            const deleteButton = data.status === 'REVOKED' ? 
+                '<button class="spb-delete-key spb-button spb-button-danger" data-key-id="' + data.id + '" style="margin-top: 20px;">Delete Key</button>' : '';
+            
             const modal = $('<div class="spb-modal-overlay active">' +
                 '<div class="spb-modal">' +
                 '<div class="spb-modal-header">' +
@@ -318,11 +342,11 @@
                 '<div class="spb-modal-body">' +
                 '<div class="spb-form-group">' +
                 '<label>Key Name:</label>' +
-                '<div>' + data.name + '</div>' +
+                '<div>' + SPB.escapeHtml(data.name) + '</div>' +
                 '</div>' +
                 '<div class="spb-form-group">' +
                 '<label>Key Preview:</label>' +
-                '<div>' + data.prefix + '***</div>' +
+                '<div><code style="background: #f6f7f7; padding: 4px 8px; border-radius: 4px; font-size: 12px; color: #1d2327;">' + SPB.escapeHtml(data.prefix) + '***</code></div>' +
                 '</div>' +
                 '<div class="spb-form-group">' +
                 '<label>Status:</label>' +
@@ -330,16 +354,21 @@
                 '</div>' +
                 '<div class="spb-form-group">' +
                 '<label>Created:</label>' +
-                '<div>' + data.created + '</div>' +
+                '<div>' + SPB.formatDate(data.created) + '</div>' +
+                '</div>' +
+                '<div class="spb-form-group">' +
+                '<label>Expires:</label>' +
+                '<div>' + (data.expires_at ? SPB.formatDate(data.expires_at) : '<span style="color: #646970;">Never</span>') + '</div>' +
                 '</div>' +
                 '<div class="spb-form-group">' +
                 '<label>Last Used:</label>' +
-                '<div>' + (data.last_used || 'Never') + '</div>' +
+                '<div>' + (data.last_used ? SPB.formatDate(data.last_used) : '<span style="color: #646970;">Never</span>') + '</div>' +
                 '</div>' +
                 '<div class="spb-form-group">' +
                 '<label>Request Count:</label>' +
                 '<div>' + data.request_count + '</div>' +
                 '</div>' +
+                deleteButton +
                 '</div>' +
                 '</div>' +
                 '</div>');
@@ -360,7 +389,7 @@
             tbody.empty();
             
             if (keys.length === 0) {
-                tbody.append('<tr><td colspan="6" class="spb-empty-state"><div class="spb-empty-state-icon">🔑</div><p>No API keys found. Generate your first key to get started.</p></td></tr>');
+                tbody.append('<tr><td colspan="7" class="spb-empty-state"><p>No API keys found. Generate your first key to get started.</p></td></tr>');
                 $('#spb-generate-key-btn').show();
                 return;
             }
@@ -370,13 +399,15 @@
             keys.forEach(function(key) {
                 const row = $('<tr>');
                 row.append('<td><strong>' + SPB.escapeHtml(key.name) + '</strong></td>');
-                row.append('<td><code style="background: #f6f7f7; padding: 4px 8px; border-radius: 4px; font-size: 12px;">' + SPB.escapeHtml(key.prefix) + '***</code></td>');
+                row.append('<td><code style="background: #f6f7f7; padding: 4px 8px; border-radius: 4px; font-size: 12px; color: #1d2327;">' + SPB.escapeHtml(key.prefix) + '***</code></td>');
                 row.append('<td>' + SPB.formatDate(key.created) + '</td>');
+                row.append('<td>' + (key.expires_at ? SPB.formatDate(key.expires_at) : '<span style="color: #646970;">Never</span>') + '</td>');
                 row.append('<td>' + (key.last_used ? SPB.formatDate(key.last_used) : '<span style="color: #646970;">Never</span>') + '</td>');
                 row.append('<td><span class="spb-badge spb-badge-' + (key.status === 'ACTIVE' ? 'success' : 'danger') + '">' + key.status + '</span></td>');
                 row.append('<td style="white-space: nowrap;">' +
                     '<button class="spb-view-details spb-button spb-button-small" data-key-id="' + key.id + '" style="margin-right: 8px;">Details</button>' +
-                    (key.status === 'ACTIVE' ? '<button class="spb-revoke-key spb-button spb-button-danger spb-button-small" data-key-id="' + key.id + '">Revoke</button>' : '') +
+                    (key.status === 'ACTIVE' ? '<button class="spb-revoke-key spb-button spb-button-danger spb-button-small" data-key-id="' + key.id + '">Revoke</button>' : 
+                     '<button class="spb-delete-key spb-button spb-button-danger spb-button-small" data-key-id="' + key.id + '">Delete</button>') +
                     '</td>');
                 tbody.append(row);
             });
@@ -433,7 +464,7 @@
             tbody.empty();
             
             if (pages.length === 0) {
-                tbody.append('<tr><td colspan="3" class="spb-empty-state"><div class="spb-empty-state-icon">📄</div><p>No pages created via API yet.</p></td></tr>');
+                tbody.append('<tr><td colspan="3" class="spb-empty-state"><p>No pages created via API yet.</p></td></tr>');
                 return;
             }
             
