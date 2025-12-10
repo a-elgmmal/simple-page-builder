@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Simple Page Builder
  * Description: Automatically create Bulk pages via a secure REST API endpoint.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Abdelrahman ElGmmal
  */
 
@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('SPB_VERSION', '1.0.2');
+define('SPB_VERSION', '1.0.3');
 define('SPB_PATH', plugin_dir_path(__FILE__));
 define('SPB_URL', plugin_dir_url(__FILE__));
 

@@ -606,6 +606,32 @@
     word-wrap: normal;
 }
 
+/* Code Block Wrapper */
+.spb-code-block-wrapper {
+    position: relative;
+    margin: 16px 0;
+}
+
+.spb-copy-code-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #f0f0f1;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.spb-copy-code-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
 /* Pre tags inside form groups (like in Documentation tab) */
 .spb-form-group pre {
     background: #1d2327 !important;
@@ -618,7 +644,7 @@
     overflow-x: auto;
     overflow-y: hidden;
     display: block;
-    margin: 16px 0;
+    margin: 0;
     white-space: pre;
     word-wrap: normal;
 }
@@ -688,6 +714,41 @@
     padding: 0 8px;
     color: #646970;
     font-size: 14px;
+}
+
+/* Webhook Secret Wrapper - Responsive */
+.spb-webhook-secret-wrapper {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.spb-regenerate-secret-btn {
+    flex-shrink: 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .spb-webhook-secret-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .spb-regenerate-secret-btn {
+        width: 100%;
+        margin-top: 8px;
+    }
+    
+    .spb-card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .spb-card-header .spb-filter-group {
+        width: 100%;
+        margin-top: 12px;
+    }
 }
 
 /* Action Buttons in Tables */

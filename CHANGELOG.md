@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2025-12-10
+
+### Fixed
+- Fixed regenerate API key modal not showing the new key - now displays modal with copy functionality
+- Fixed CSV export error - improved response handling and error messages
+- Fixed Created Pages data loss - updated to use pagination instead of hard limit
+- Fixed first pre tag (Authorization header) missing horizontal scroll
+- Fixed regenerate button not showing success message when modal is displayed
+
+### Added
+- Copy buttons on all pre code blocks in API Documentation tab (top right corner)
+- Mobile responsive layout for webhook secret field - regenerate button moves below input on mobile
+- Mobile responsive layout for API Keys filter - filter moves below title on mobile
+
+### Changed
+- Moved API Keys status filter to card header (same line as title) for better space utilization
+- Updated version to 1.0.3
+- Improved mobile responsiveness across admin interface
+
 ## [1.0.2] - 2025-12-10
 
 ### Fixed

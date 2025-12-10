@@ -126,20 +126,6 @@ class SimplePageBuilder_Admin {
                 <button type="button" id="spb-generate-key-btn" class="spb-button" style="display: none;">+ Generate New Key</button>
             </div>
             
-            <div class="spb-card" style="margin-bottom: 20px;">
-                <div class="spb-filters">
-                    <div class="spb-filter-group">
-                        <label for="spb-filter-key-status">Status</label>
-                        <select id="spb-filter-key-status" class="spb-key-filter">
-                            <option value="">All</option>
-                            <option value="ACTIVE">Active</option>
-                            <option value="REVOKED">Revoked</option>
-                            <option value="EXPIRED">Expired</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
             <div class="spb-card" id="spb-generate-key-card" style="display: none;">
                 <div class="spb-card-header">
                     <h3 class="spb-card-title">Generate New API Key</h3>
@@ -163,8 +149,17 @@ class SimplePageBuilder_Admin {
             </div>
 
              <div class="spb-card">
-                 <div class="spb-card-header">
+                 <div class="spb-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
                      <h3 class="spb-card-title">Existing API Keys</h3>
+                     <div class="spb-filter-group" style="margin: 0;">
+                         <label for="spb-filter-key-status" style="margin-right: 8px;">Status:</label>
+                         <select id="spb-filter-key-status" class="spb-key-filter">
+                             <option value="">All</option>
+                             <option value="ACTIVE">Active</option>
+                             <option value="REVOKED">Revoked</option>
+                             <option value="EXPIRED">Expired</option>
+                         </select>
+                     </div>
                  </div>
                  <div class="spb-table-wrapper">
                  <table id="spb-keys-table" class="spb-table">
@@ -318,13 +313,13 @@ class SimplePageBuilder_Admin {
 
                     <div class="spb-form-group">
                         <label for="spb-webhook-secret">Secret Key</label>
-                        <div style="display: flex; gap: 12px; align-items: center;">
+                        <div class="spb-webhook-secret-wrapper">
                             <div style="position: relative; flex: 1;">
                                 <input type="password" id="spb-webhook-secret" name="webhookSecret" value="<?php echo esc_attr($webhook_secret); ?>" placeholder="Your webhook secret" style="padding-right: 80px; width: 100%;">
                                 <button type="button" id="spb-toggle-secret" class="spb-button spb-button-secondary" style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); padding: 6px 12px; font-size: 12px; min-width: auto; border-radius: 4px;" title="Show/Hide">👁️</button>
                                 <button type="button" id="spb-copy-secret" class="spb-button spb-button-secondary" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 6px 12px; font-size: 12px; min-width: auto; border-radius: 4px;" data-copy-target="spb-webhook-secret">📋</button>
                             </div>
-                            <button type="button" id="spb-regenerate-secret" class="spb-button spb-button-secondary">Regenerate</button>
+                            <button type="button" id="spb-regenerate-secret" class="spb-button spb-button-secondary spb-regenerate-secret-btn">Regenerate</button>
                         </div>
                         <p class="description">Secret key for HMAC-SHA256 signature verification</p>
                     </div>
@@ -386,12 +381,17 @@ class SimplePageBuilder_Admin {
             <div class="spb-form-group">
                 <h3>Authentication</h3>
                 <p>All requests must include an API key in the Authorization header:</p>
-                <pre><code>Authorization: Bearer YOUR_API_KEY_HERE</code></pre>
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="auth-header-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="auth-header-code"><code>Authorization: Bearer YOUR_API_KEY_HERE</code></pre>
+                </div>
             </div>
 
             <div class="spb-form-group">
                 <h3>cURL Example</h3>
-                <pre><code>curl -X POST <?php echo esc_html($api_endpoint); ?> \
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="curl-example-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="curl-example-code"><code>curl -X POST <?php echo esc_html($api_endpoint); ?> \
   -H "Authorization: Bearer YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
   -d '{
@@ -408,11 +408,14 @@ class SimplePageBuilder_Admin {
       }
     ]
   }'</code></pre>
+                </div>
             </div>
 
             <div class="spb-form-group">
                 <h3>Request Body</h3>
-                <pre><code>{
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="request-body-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="request-body-code"><code>{
   "pages": [
     {
       "title": "Page Title (required)",
@@ -421,11 +424,14 @@ class SimplePageBuilder_Admin {
     }
   ]
 }</code></pre>
+                </div>
             </div>
 
             <div class="spb-form-group">
                 <h3>Response Example</h3>
-                <pre><code>{
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="response-example-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="response-example-code"><code>{
   "success": true,
   "pages": [
     {
@@ -436,12 +442,15 @@ class SimplePageBuilder_Admin {
   ],
   "errors": []
 }</code></pre>
+                </div>
             </div>
 
             <div class="spb-form-group">
                 <h3>Webhook Notifications</h3>
                 <p>When pages are created, a POST request is sent to your configured webhook URL with the following payload:</p>
-                <pre><code>{
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="webhook-payload-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="webhook-payload-code"><code>{
   "event": "pages_created",
   "timestamp": "2025-10-07T14:30:00Z",
   "request_id": "req_abc123xyz",
@@ -455,9 +464,12 @@ class SimplePageBuilder_Admin {
     }
   ]
 }</code></pre>
+                </div>
                 <p><strong>Webhook Signature Verification:</strong></p>
                 <p>The webhook includes an <code>X-Webhook-Signature</code> header with an HMAC-SHA256 signature. Verify it using your webhook secret:</p>
-                <pre><code>// PHP Example
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="webhook-verify-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="webhook-verify-code"><code>// PHP Example
 $payload = file_get_contents('php://input');
 $signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'];
 $secret = 'your_webhook_secret';
@@ -468,6 +480,7 @@ if (hash_equals($signature, $computed)) {
     // Verified!
     $data = json_decode($payload, true);
 }</code></pre>
+                </div>
             </div>
 
             <div class="spb-form-group">
@@ -823,15 +836,34 @@ if (hash_equals($signature, $computed)) {
         check_ajax_referer('spb_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Unauthorized', 403);
 
+        $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
+        $per_page = 20;
+        $offset = ($page - 1) * $per_page;
+
         global $wpdb;
-        $pages = $wpdb->get_results(
+        
+        // Get total count
+        $total = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}spb_created_pages");
+        
+        // Get paginated results
+        $pages = $wpdb->get_results($wpdb->prepare(
             "SELECT page_id, page_title, page_url, api_key_name, created_at 
              FROM {$wpdb->prefix}spb_created_pages 
              ORDER BY created_at DESC 
-             LIMIT 100"
-        );
+             LIMIT %d OFFSET %d",
+            $per_page,
+            $offset
+        ));
 
-        wp_send_json_success($pages);
+        wp_send_json_success([
+            'pages' => $pages,
+            'pagination' => [
+                'page' => $page,
+                'per_page' => $per_page,
+                'total' => intval($total),
+                'total_pages' => ceil($total / $per_page)
+            ]
+        ]);
     }
 
     public function handle_save_settings() {

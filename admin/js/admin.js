@@ -89,6 +89,9 @@
             // Copy to Clipboard
             $(document).on('click', '.spb-copy-button', this.handleCopy);
             
+            // Copy Code Blocks
+            $(document).on('click', '.spb-copy-code-button', this.handleCopyCode);
+            
             // Export Logs CSV
             $(document).on('click', '#spb-export-logs', this.handleExportLogs);
             
@@ -282,11 +285,13 @@
                     SPB.showGeneratedKey({
                         key: response.data.key,
                         prefix: response.data.prefix,
-                        name: response.data.name
+                        name: response.data.name || 'Regenerated Key'
                     });
                 }
                 const message = response.data && response.data.message ? response.data.message : 'API key ' + actionText + 'd successfully';
-                SPB.showAlert('success', message);
+                if (action !== 'regenerate') {
+                    SPB.showAlert('success', message);
+                }
                 SPB.loadApiKeys();
             });
         },
@@ -329,6 +334,31 @@
                 SPB.showAlert('success', 'Copied to clipboard!');
             }
         },
+        
+        // Copy Code Block
+        handleCopyCode: function(e) {
+            e.preventDefault();
+            const targetId = $(this).data('copy-target');
+            const codeElement = $('#' + targetId);
+            const text = codeElement.text() || codeElement.find('code').text();
+            
+            if (!text) {
+                SPB.showAlert('error', 'No code to copy');
+                return;
+            }
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function() {
+                    SPB.showAlert('success', 'Copied to clipboard!');
+                });
+            } else {
+                // Fallback for older browsers
+                const textarea = $('<textarea>').val(text).appendTo('body').select();
+                document.execCommand('copy');
+                textarea.remove();
+                SPB.showAlert('success', 'Copied to clipboard!');
+            }
+        },
 
         // Export Logs CSV
         handleExportLogs: function(e) {
@@ -342,9 +372,12 @@
             };
 
             SPB.ajax('spb_export_logs_csv', filters, function(response) {
-                if (response.data && response.data.csv) {
+                // response is already the data object from wp_send_json_success
+                const csvData = (response && response.csv) ? response.csv : (response && response.data && response.data.csv) ? response.data.csv : null;
+                
+                if (csvData) {
                     // Create download link
-                    const blob = new Blob([response.data.csv], { type: 'text/csv;charset=utf-8;' });
+                    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
                     const url = window.URL.createObjectURL(blob);
                     const a = $('<a>').attr({
                         href: url,
@@ -355,7 +388,7 @@
                     window.URL.revokeObjectURL(url);
                     SPB.showAlert('success', 'CSV exported successfully');
                 } else {
-                    SPB.showAlert('error', 'Failed to export CSV');
+                    SPB.showAlert('error', 'Failed to export CSV: ' + (response && response.message ? response.message : 'Unknown error'));
                 }
             });
         },
