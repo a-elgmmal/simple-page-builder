@@ -267,9 +267,17 @@
     font-size: 13px;
 }
 
+/* Table Wrapper for Responsive Scroll */
+.spb-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0;
+}
+
 /* Tables - Modern Style */
 .spb-table {
     width: 100%;
+    min-width: 800px;
     border-collapse: separate;
     border-spacing: 0;
     background: #fff;
@@ -591,8 +599,11 @@
     font-size: 13px;
     line-height: 1.6;
     overflow-x: auto;
+    overflow-y: hidden;
     display: block;
     margin: 16px 0;
+    white-space: pre;
+    word-wrap: normal;
 }
 
 /* Pre tags inside form groups (like in Documentation tab) */
@@ -605,8 +616,11 @@
     font-size: 13px;
     line-height: 1.6;
     overflow-x: auto;
+    overflow-y: hidden;
     display: block;
     margin: 16px 0;
+    white-space: pre;
+    word-wrap: normal;
 }
 
 .spb-tab-content code {
@@ -631,6 +645,49 @@
     padding: 0;
     background: transparent;
     color: #f0f0f1;
+}
+
+/* Pagination */
+.spb-pagination {
+    margin-top: 24px;
+    padding: 16px;
+    background: #fff;
+    border-top: 1px solid #dcdcde;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.spb-pagination-info {
+    color: #646970;
+    font-size: 14px;
+}
+
+.spb-pagination-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.spb-pagination-buttons button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
+}
+
+.spb-pagination-buttons button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.spb-pagination-ellipsis {
+    padding: 0 8px;
+    color: #646970;
+    font-size: 14px;
 }
 
 /* Action Buttons in Tables */

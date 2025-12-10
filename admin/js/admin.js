@@ -66,11 +66,8 @@
             // Generate API Key
             $(document).on('submit', '#spb-generate-key-form', this.handleGenerateKey);
             
-            // Revoke Key
+            // Revoke/Restore Key
             $(document).on('click', '.spb-revoke-key', this.handleRevokeKey);
-            
-            // Delete Key
-            $(document).on('click', '.spb-delete-key', this.handleDeleteKey);
             
             // Save Settings
             $(document).on('submit', '#spb-settings-form', this.handleSaveSettings);
@@ -97,6 +94,12 @@
             
             // Filter Logs
             $(document).on('change', '.spb-log-filter', this.handleFilterLogs);
+            
+            // Filter API Keys
+            $(document).on('change', '.spb-key-filter', this.handleFilterKeys);
+            
+            // Pagination
+            $(document).on('click', '.spb-pagination button', this.handlePagination);
             
             // Modal Close
             $(document).on('click', '.spb-modal-close, .spb-modal-overlay', function(e) {
@@ -199,7 +202,7 @@
             
             if (input.attr('type') === 'password') {
                 input.attr('type', 'text');
-                button.text('🙈');
+                button.text('👁️‍🗨️');
             } else {
                 input.attr('type', 'password');
                 button.text('👁️');
@@ -257,14 +260,14 @@
             $('body').append(modal);
         },
 
-        // Revoke/Restore Key
+        // Revoke/Regenerate Key
         handleRevokeKey: function(e) {
             e.preventDefault();
             
             const keyId = $(this).data('key-id');
-            const isRevoke = $(this).hasClass('spb-revoke-key');
-            const action = isRevoke ? 'revoke' : 'restore';
-            const actionText = isRevoke ? 'revoke' : 'restore';
+            const isRegenerate = $(this).hasClass('spb-regenerate-key');
+            const action = isRegenerate ? 'regenerate' : 'revoke';
+            const actionText = isRegenerate ? 'regenerate' : 'revoke';
             
             if (!confirm('Are you sure you want to ' + actionText + ' this API key?')) {
                 return;
@@ -274,28 +277,20 @@
                 id: keyId,
                 action_type: action
             }, function(response) {
-                SPB.showAlert('success', response.data && response.data.message ? response.data.message : 'API key ' + actionText + 'd successfully');
+                if (action === 'regenerate' && response.data && response.data.key) {
+                    // Show the new key in a modal (same as generate)
+                    SPB.showGeneratedKey({
+                        key: response.data.key,
+                        prefix: response.data.prefix,
+                        name: response.data.name
+                    });
+                }
+                const message = response.data && response.data.message ? response.data.message : 'API key ' + actionText + 'd successfully';
+                SPB.showAlert('success', message);
                 SPB.loadApiKeys();
             });
         },
         
-        // Delete Key
-        handleDeleteKey: function(e) {
-            e.preventDefault();
-            
-            if (!confirm('Are you sure you want to permanently delete this API key? This action cannot be undone.')) {
-                return;
-            }
-
-            const keyId = $(this).data('key-id');
-            
-            SPB.ajax('spb_delete_key', {
-                id: keyId
-            }, function() {
-                SPB.showAlert('success', 'API key deleted successfully');
-                SPB.loadApiKeys();
-            });
-        },
 
         // Save Settings
         handleSaveSettings: function(e) {
@@ -346,17 +341,22 @@
                 apiKey: $('#spb-filter-api-key').val()
             };
 
-            SPB.ajax('spb_export_logs_csv', filters, function(data) {
-                // Create download link
-                const blob = new Blob([data], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = $('<a>').attr({
-                    href: url,
-                    download: 'spb-logs-' + new Date().toISOString().split('T')[0] + '.csv'
-                }).appendTo('body');
-                a[0].click();
-                a.remove();
-                window.URL.revokeObjectURL(url);
+            SPB.ajax('spb_export_logs_csv', filters, function(response) {
+                if (response.data && response.data.csv) {
+                    // Create download link
+                    const blob = new Blob([response.data.csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = $('<a>').attr({
+                        href: url,
+                        download: 'spb-logs-' + new Date().toISOString().split('T')[0] + '.csv'
+                    }).appendTo('body');
+                    a[0].click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                    SPB.showAlert('success', 'CSV exported successfully');
+                } else {
+                    SPB.showAlert('error', 'Failed to export CSV');
+                }
             });
         },
 
@@ -422,20 +422,27 @@
         },
 
         // Load API Keys
-        loadApiKeys: function() {
-            SPB.ajax('spb_get_keys', {}, function(data) {
-                SPB.renderApiKeys(data);
+        loadApiKeys: function(page) {
+            page = page || 1;
+            const status = $('#spb-filter-key-status').val() || '';
+            
+            SPB.ajax('spb_get_keys', {
+                page: page,
+                status: status
+            }, function(response) {
+                SPB.renderApiKeys(response.keys || response.data || [], response.pagination);
             });
         },
 
         // Render API Keys
-        renderApiKeys: function(keys) {
+        renderApiKeys: function(keys, pagination) {
             const tbody = $('#spb-keys-table tbody');
             tbody.empty();
             
             if (keys.length === 0) {
-                tbody.append('<tr><td colspan="7" class="spb-empty-state"><p>No API keys found. Generate your first key to get started.</p></td></tr>');
+                tbody.append('<tr><td colspan="8" class="spb-empty-state"><p>No API keys found. Generate your first key to get started.</p></td></tr>');
                 $('#spb-generate-key-btn').show();
+                $('#spb-keys-pagination').empty();
                 return;
             }
             
@@ -448,39 +455,134 @@
                 row.append('<td>' + SPB.formatDate(key.created) + '</td>');
                 row.append('<td>' + (key.expires_at ? SPB.formatDate(key.expires_at) : '<span style="color: #646970;">Never</span>') + '</td>');
                 row.append('<td>' + (key.last_used ? SPB.formatDate(key.last_used) : '<span style="color: #646970;">Never</span>') + '</td>');
-                row.append('<td><span class="spb-badge spb-badge-' + (key.status === 'ACTIVE' ? 'success' : 'danger') + '">' + key.status + '</span></td>');
+                row.append('<td>' + (key.request_count || 0) + '</td>');
+                row.append('<td><span class="spb-badge spb-badge-' + (key.status === 'ACTIVE' ? 'success' : key.status === 'EXPIRED' ? 'warning' : 'danger') + '">' + key.status + '</span></td>');
                 row.append('<td style="white-space: nowrap;">' +
                     '<button class="spb-view-details spb-button spb-button-small" data-key-id="' + key.id + '" style="margin-right: 8px;">Details</button>' +
                     (key.status === 'ACTIVE' ? 
                      '<button class="spb-revoke-key spb-button spb-button-warning spb-button-small" data-key-id="' + key.id + '">Revoke</button>' : 
-                     '<button class="spb-revoke-key spb-restore-key spb-button spb-button-secondary spb-button-small" data-key-id="' + key.id + '" style="margin-right: 8px;">Restore</button>' +
-                     '<button class="spb-delete-key spb-button spb-button-danger spb-button-small" data-key-id="' + key.id + '">Delete</button>') +
+                     '<button class="spb-revoke-key spb-regenerate-key spb-button spb-button-secondary spb-button-small" data-key-id="' + key.id + '">Regenerate</button>') +
                     '</td>');
                 tbody.append(row);
             });
+            
+            if (pagination) {
+                SPB.renderPagination('spb-keys-pagination', pagination, 'loadApiKeys');
+            }
+        },
+        
+        // Filter API Keys
+        handleFilterKeys: function() {
+            SPB.loadApiKeys(1);
+        },
+        
+        // Handle Pagination
+        handlePagination: function(e) {
+            e.preventDefault();
+            const button = $(this);
+            const action = button.data('action');
+            const target = button.data('target');
+            const page = parseInt(button.data('page')) || 1;
+            
+            if (action === 'page' && target) {
+                if (target === 'keys') {
+                    SPB.loadApiKeys(page);
+                } else if (target === 'logs') {
+                    SPB.loadActivityLogs(page);
+                } else if (target === 'pages') {
+                    SPB.loadCreatedPages(page);
+                }
+            }
+        },
+        
+        // Render Pagination
+        renderPagination: function(containerId, pagination, loadFunction) {
+            const container = $('#' + containerId);
+            container.empty();
+            
+            if (!pagination || pagination.total_pages <= 1) {
+                return;
+            }
+            
+            const currentPage = pagination.page;
+            const totalPages = pagination.total_pages;
+            const target = containerId.replace('spb-', '').replace('-pagination', '');
+            
+            let html = '<div class="spb-pagination-info">';
+            html += 'Showing ' + ((currentPage - 1) * pagination.per_page + 1) + ' to ' + 
+                    Math.min(currentPage * pagination.per_page, pagination.total) + 
+                    ' of ' + pagination.total + ' entries';
+            html += '</div>';
+            html += '<div class="spb-pagination-buttons">';
+            
+            // Previous button
+            if (currentPage > 1) {
+                html += '<button class="spb-button spb-button-small" data-action="page" data-target="' + target + '" data-page="' + (currentPage - 1) + '">Previous</button>';
+            } else {
+                html += '<button class="spb-button spb-button-small" disabled>Previous</button>';
+            }
+            
+            // Page numbers
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                html += '<button class="spb-button spb-button-small" data-action="page" data-target="' + target + '" data-page="1">1</button>';
+                if (startPage > 2) {
+                    html += '<span class="spb-pagination-ellipsis">...</span>';
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    html += '<button class="spb-button spb-button-small spb-button-primary" disabled>' + i + '</button>';
+                } else {
+                    html += '<button class="spb-button spb-button-small" data-action="page" data-target="' + target + '" data-page="' + i + '">' + i + '</button>';
+                }
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += '<span class="spb-pagination-ellipsis">...</span>';
+                }
+                html += '<button class="spb-button spb-button-small" data-action="page" data-target="' + target + '" data-page="' + totalPages + '">' + totalPages + '</button>';
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                html += '<button class="spb-button spb-button-small" data-action="page" data-target="' + target + '" data-page="' + (currentPage + 1) + '">Next</button>';
+            } else {
+                html += '<button class="spb-button spb-button-small" disabled>Next</button>';
+            }
+            
+            html += '</div>';
+            container.html(html);
         },
 
         // Load Activity Logs
-        loadActivityLogs: function() {
+        loadActivityLogs: function(page) {
+            page = page || 1;
             const filters = {
+                page: page,
                 status: $('#spb-filter-status').val() || '',
                 dateFrom: $('#spb-filter-date-from').val() || '',
                 dateTo: $('#spb-filter-date-to').val() || '',
                 apiKey: $('#spb-filter-api-key').val() || ''
             };
 
-            SPB.ajax('spb_get_logs', filters, function(data) {
-                SPB.renderActivityLogs(data);
+            SPB.ajax('spb_get_logs', filters, function(response) {
+                SPB.renderActivityLogs(response.logs || response.data || [], response.pagination);
             });
         },
 
         // Render Activity Logs
-        renderActivityLogs: function(logs) {
+        renderActivityLogs: function(logs, pagination) {
             const tbody = $('#spb-logs-table tbody');
             tbody.empty();
             
             if (logs.length === 0) {
                 tbody.append('<tr><td colspan="8" class="spb-empty-state">No logs found</td></tr>');
+                $('#spb-logs-pagination').empty();
                 return;
             }
             
@@ -496,22 +598,31 @@
                 row.append('<td><span class="spb-badge spb-badge-' + (log.webhookStatus === 'SENT' ? 'success' : log.webhookStatus === 'FAILED' ? 'danger' : 'neutral') + '">' + log.webhookStatus + '</span></td>');
                 tbody.append(row);
             });
+            
+            if (pagination) {
+                SPB.renderPagination('spb-logs-pagination', pagination, 'loadActivityLogs');
+            }
         },
 
         // Load Created Pages
-        loadCreatedPages: function() {
-            SPB.ajax('spb_get_created_pages', {}, function(data) {
-                SPB.renderCreatedPages(data);
+        loadCreatedPages: function(page) {
+            page = page || 1;
+            
+            SPB.ajax('spb_get_created_pages', {
+                page: page
+            }, function(response) {
+                SPB.renderCreatedPages(response.pages || response.data || [], response.pagination);
             });
         },
 
         // Render Created Pages
-        renderCreatedPages: function(pages) {
+        renderCreatedPages: function(pages, pagination) {
             const tbody = $('#spb-pages-table tbody');
             tbody.empty();
             
             if (pages.length === 0) {
                 tbody.append('<tr><td colspan="3" class="spb-empty-state"><p>No pages created via API yet.</p></td></tr>');
+                $('#spb-pages-pagination').empty();
                 return;
             }
             
@@ -522,6 +633,10 @@
                 row.append('<td>' + SPB.escapeHtml(page.api_key_name) + '</td>');
                 tbody.append(row);
             });
+            
+            if (pagination) {
+                SPB.renderPagination('spb-pages-pagination', pagination, 'loadCreatedPages');
+            }
         },
 
         // Show Alert

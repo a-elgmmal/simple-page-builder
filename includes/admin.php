@@ -10,7 +10,6 @@ class SimplePageBuilder_Admin {
         add_action('wp_ajax_spb_get_keys', [$this, 'handle_get_keys']);
         add_action('wp_ajax_spb_generate_key', [$this, 'handle_generate_key']);
         add_action('wp_ajax_spb_revoke_key', [$this, 'handle_revoke_key']);
-        add_action('wp_ajax_spb_delete_key', [$this, 'handle_delete_key']);
         add_action('wp_ajax_spb_get_key_details', [$this, 'handle_get_key_details']);
         add_action('wp_ajax_spb_get_logs', [$this, 'handle_get_logs']);
         add_action('wp_ajax_spb_export_logs_csv', [$this, 'handle_export_logs_csv']);
@@ -127,6 +126,20 @@ class SimplePageBuilder_Admin {
                 <button type="button" id="spb-generate-key-btn" class="spb-button" style="display: none;">+ Generate New Key</button>
             </div>
             
+            <div class="spb-card" style="margin-bottom: 20px;">
+                <div class="spb-filters">
+                    <div class="spb-filter-group">
+                        <label for="spb-filter-key-status">Status</label>
+                        <select id="spb-filter-key-status" class="spb-key-filter">
+                            <option value="">All</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="REVOKED">Revoked</option>
+                            <option value="EXPIRED">Expired</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
             <div class="spb-card" id="spb-generate-key-card" style="display: none;">
                 <div class="spb-card-header">
                     <h3 class="spb-card-title">Generate New API Key</h3>
@@ -149,11 +162,12 @@ class SimplePageBuilder_Admin {
                 </form>
             </div>
 
-            <div class="spb-card">
-                <div class="spb-card-header">
-                    <h3 class="spb-card-title">Existing API Keys</h3>
-                </div>
-                <table id="spb-keys-table" class="spb-table">
+             <div class="spb-card">
+                 <div class="spb-card-header">
+                     <h3 class="spb-card-title">Existing API Keys</h3>
+                 </div>
+                 <div class="spb-table-wrapper">
+                 <table id="spb-keys-table" class="spb-table">
                     <thead>
                     <tr>
                         <th>Key Name</th>
@@ -161,22 +175,25 @@ class SimplePageBuilder_Admin {
                         <th>Created</th>
                         <th>Expires</th>
                         <th>Last Used</th>
+                        <th>Request Count</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="6" class="spb-loading">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <?php
-    }
+                     <tbody>
+                         <tr>
+                             <td colspan="8" class="spb-loading">Loading...</td>
+                         </tr>
+                     </tbody>
+                 </table>
+                 </div>
+                 <div id="spb-keys-pagination" class="spb-pagination"></div>
+             </div>
+         </div>
+         <?php
+     }
 
-    private function render_activity_log_tab() {
+     private function render_activity_log_tab() {
         ?>
         <div id="activity-log" class="spb-tab-content active">
             <h2>Activity Logs</h2>
@@ -219,8 +236,9 @@ class SimplePageBuilder_Admin {
                 </div>
             </div>
 
-            <div class="spb-card">
-                <table id="spb-logs-table" class="spb-table">
+             <div class="spb-card">
+                 <div class="spb-table-wrapper">
+                 <table id="spb-logs-table" class="spb-table">
                     <thead>
                         <tr>
                             <th>Timestamp</th>
@@ -237,14 +255,16 @@ class SimplePageBuilder_Admin {
                         <tr>
                             <td colspan="8" class="spb-loading">Loading...</td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <?php
-    }
+                     </tbody>
+                 </table>
+                 </div>
+                 <div id="spb-logs-pagination" class="spb-pagination"></div>
+             </div>
+         </div>
+         <?php
+     }
 
-    private function render_created_pages_tab() {
+     private function render_created_pages_tab() {
         ?>
         <div id="created-pages" class="spb-tab-content active">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
@@ -252,8 +272,9 @@ class SimplePageBuilder_Admin {
                 <button type="button" id="spb-refresh-pages" class="spb-button spb-button-secondary">Refresh</button>
             </div>
             
-            <div class="spb-card">
-                <table id="spb-pages-table" class="spb-table">
+             <div class="spb-card">
+                 <div class="spb-table-wrapper">
+                 <table id="spb-pages-table" class="spb-table">
                     <thead>
                         <tr>
                             <th>Title</th>
@@ -265,14 +286,16 @@ class SimplePageBuilder_Admin {
                         <tr>
                             <td colspan="3" class="spb-loading">Loading...</td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <?php
-    }
+                     </tbody>
+                 </table>
+                 </div>
+                 <div id="spb-pages-pagination" class="spb-pagination"></div>
+             </div>
+         </div>
+         <?php
+     }
 
-    private function render_settings_tab() {
+     private function render_settings_tab() {
         $webhook_url = get_option('spb_webhook_url', '');
         $webhook_secret = get_option('spb_webhook_secret', '');
         $rate_limit = get_option('spb_rate_limit', 100);
@@ -298,7 +321,7 @@ class SimplePageBuilder_Admin {
                         <div style="display: flex; gap: 12px; align-items: center;">
                             <div style="position: relative; flex: 1;">
                                 <input type="password" id="spb-webhook-secret" name="webhookSecret" value="<?php echo esc_attr($webhook_secret); ?>" placeholder="Your webhook secret" style="padding-right: 80px; width: 100%;">
-                                <button type="button" id="spb-toggle-secret" class="spb-button spb-button-secondary" style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); padding: 6px 12px; font-size: 12px; min-width: auto; border-radius: 4px;">👁️</button>
+                                <button type="button" id="spb-toggle-secret" class="spb-button spb-button-secondary" style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); padding: 6px 12px; font-size: 12px; min-width: auto; border-radius: 4px;" title="Show/Hide">👁️</button>
                                 <button type="button" id="spb-copy-secret" class="spb-button spb-button-secondary" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 6px 12px; font-size: 12px; min-width: auto; border-radius: 4px;" data-copy-target="spb-webhook-secret">📋</button>
                             </div>
                             <button type="button" id="spb-regenerate-secret" class="spb-button spb-button-secondary">Regenerate</button>
@@ -472,14 +495,49 @@ if (hash_equals($signature, $computed)) {
         check_ajax_referer('spb_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Unauthorized', 403);
 
-        global $wpdb;
-        $keys = $wpdb->get_results($wpdb->prepare(
-            "SELECT id, name, prefix, status, permissions, created_at as created, expires_at, last_used, request_count 
-             FROM {$wpdb->prefix}spb_api_keys 
-             ORDER BY created_at DESC"
-        ));
+        $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
+        $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+        $per_page = 20;
+        $offset = ($page - 1) * $per_page;
 
-        wp_send_json_success($keys);
+        global $wpdb;
+        
+        $where = ['1=1'];
+        $params = [];
+        
+        if ($status) {
+            $where[] = 'status = %s';
+            $params[] = $status;
+        }
+        
+        $where_clause = implode(' AND ', $where);
+        
+        // Get total count
+        $count_query = "SELECT COUNT(*) FROM {$wpdb->prefix}spb_api_keys WHERE $where_clause";
+        if (!empty($params)) {
+            $total = $wpdb->get_var($wpdb->prepare($count_query, $params));
+        } else {
+            $total = $wpdb->get_var($count_query);
+        }
+        
+        // Get paginated results
+        $query = "SELECT id, name, prefix, status, permissions, created_at as created, expires_at, last_used, request_count 
+                  FROM {$wpdb->prefix}spb_api_keys 
+                  WHERE $where_clause
+                  ORDER BY created_at DESC 
+                  LIMIT %d OFFSET %d";
+        
+        $keys = $wpdb->get_results($wpdb->prepare($query, array_merge($params, [$per_page, $offset])));
+
+        wp_send_json_success([
+            'keys' => $keys,
+            'pagination' => [
+                'page' => $page,
+                'per_page' => $per_page,
+                'total' => intval($total),
+                'total_pages' => ceil($total / $per_page)
+            ]
+        ]);
     }
 
     public function handle_generate_key() {
@@ -498,11 +556,17 @@ if (hash_equals($signature, $computed)) {
         $prefix = substr($key, 0, 8);
         $hash = wp_hash_password($key);
 
-        // Calculate expiration date
+        // Calculate expiration date and status
         $expires_at = null;
+        $status = 'ACTIVE';
+        
         if ($expiration) {
             // Use provided expiration date
             $expires_at = date('Y-m-d H:i:s', strtotime($expiration));
+            // Check if expiration date is in the past
+            if (strtotime($expires_at) < time()) {
+                $status = 'EXPIRED';
+            }
         } else {
             // Use default expiration from settings if no date provided
             $expiration_default = get_option('spb_key_expiration_default', 'never');
@@ -516,7 +580,7 @@ if (hash_equals($signature, $computed)) {
             'name' => $name,
             'api_key_hash' => $hash,
             'prefix' => $prefix,
-            'status' => 'ACTIVE',
+            'status' => $status,
             'permissions' => 'read_write',
             'created_at' => current_time('mysql'),
             'expires_at' => $expires_at,
@@ -542,38 +606,50 @@ if (hash_equals($signature, $computed)) {
         $action = isset($_POST['action_type']) ? sanitize_text_field($_POST['action_type']) : 'revoke';
         
         global $wpdb;
-        $new_status = $action === 'restore' ? 'ACTIVE' : 'REVOKED';
-        $wpdb->update($wpdb->prefix . 'spb_api_keys', ['status' => $new_status], ['id' => $id]);
         
-        $message = $action === 'restore' ? 'API key restored successfully' : 'API key revoked successfully';
-        wp_send_json_success(['message' => $message]);
+        if ($action === 'regenerate') {
+            // Get existing key data to preserve
+            $old_key = $wpdb->get_row($wpdb->prepare(
+                "SELECT name, expires_at, created_at, last_used FROM {$wpdb->prefix}spb_api_keys WHERE id = %d",
+                $id
+            ));
+            
+            if (!$old_key) {
+                wp_send_json_error('Key not found', 404);
+            }
+            
+            // Generate new API key
+            $new_key = bin2hex(random_bytes(32)); // 64 chars
+            $prefix = substr($new_key, 0, 8);
+            $hash = wp_hash_password($new_key);
+            
+            // Update with new key but keep same name, expiration, created date, last used
+            $wpdb->update(
+                $wpdb->prefix . 'spb_api_keys',
+                [
+                    'api_key_hash' => $hash,
+                    'prefix' => $prefix,
+                    'status' => 'ACTIVE',
+                    'request_count' => 0 // Reset request count for new key
+                ],
+                ['id' => $id],
+                ['%s', '%s', '%s', '%d'],
+                ['%d']
+            );
+            
+            wp_send_json_success([
+                'message' => 'API key regenerated successfully',
+                'key' => $new_key, // Show once in modal
+                'prefix' => $prefix,
+                'name' => $old_key->name
+            ]);
+        } else {
+            // Revoke action
+        $wpdb->update($wpdb->prefix . 'spb_api_keys', ['status' => 'REVOKED'], ['id' => $id]);
+            wp_send_json_success(['message' => 'API key revoked successfully']);
+        }
     }
 
-    public function handle_delete_key() {
-        check_ajax_referer('spb_admin_nonce', 'nonce');
-        if (!current_user_can('manage_options')) wp_send_json_error('Unauthorized', 403);
-
-        $id = intval($_POST['id']);
-        global $wpdb;
-        
-        // Only allow deletion of revoked keys
-        $key = $wpdb->get_row($wpdb->prepare("SELECT status FROM {$wpdb->prefix}spb_api_keys WHERE id = %d", $id));
-        if (!$key) {
-            wp_send_json_error('Key not found', 404);
-        }
-        
-        if ($key->status !== 'REVOKED') {
-            wp_send_json_error('Only revoked keys can be deleted', 400);
-        }
-        
-        $deleted = $wpdb->delete($wpdb->prefix . 'spb_api_keys', ['id' => $id], ['%d']);
-        
-        if ($deleted === false) {
-            wp_send_json_error('Failed to delete key', 500);
-        }
-        
-        wp_send_json_success();
-    }
 
     public function handle_get_key_details() {
         check_ajax_referer('spb_admin_nonce', 'nonce');
@@ -603,10 +679,13 @@ if (hash_equals($signature, $computed)) {
         check_ajax_referer('spb_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Unauthorized', 403);
 
+        $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
         $date_from = isset($_POST['dateFrom']) ? sanitize_text_field($_POST['dateFrom']) : '';
         $date_to = isset($_POST['dateTo']) ? sanitize_text_field($_POST['dateTo']) : '';
         $api_key = isset($_POST['apiKey']) ? sanitize_text_field($_POST['apiKey']) : '';
+        $per_page = 20;
+        $offset = ($page - 1) * $per_page;
 
         global $wpdb;
         $where = ['1=1'];
@@ -633,6 +712,16 @@ if (hash_equals($signature, $computed)) {
         }
 
         $where_clause = implode(' AND ', $where);
+        
+        // Get total count
+        $count_query = "SELECT COUNT(*) FROM {$wpdb->prefix}spb_api_logs WHERE $where_clause";
+        if (!empty($params)) {
+            $total = $wpdb->get_var($wpdb->prepare($count_query, $params));
+        } else {
+            $total = $wpdb->get_var($count_query);
+        }
+        
+        // Get paginated results
         $query = "SELECT id, api_key_name as apiKeyName, endpoint, status, status_code as statusCode, 
                          pages_created as pagesCreated, response_time as responseTime, 
                          ip_address as ipAddress, webhook_status as webhookStatus, 
@@ -640,20 +729,24 @@ if (hash_equals($signature, $computed)) {
                   FROM {$wpdb->prefix}spb_api_logs 
                   WHERE $where_clause 
                   ORDER BY created_at DESC 
-                  LIMIT 100";
+                  LIMIT %d OFFSET %d";
 
-        if (!empty($params)) {
-            $logs = $wpdb->get_results($wpdb->prepare($query, $params));
-        } else {
-            $logs = $wpdb->get_results($query);
-        }
+        $logs = $wpdb->get_results($wpdb->prepare($query, array_merge($params, [$per_page, $offset])));
 
-        wp_send_json_success($logs);
+        wp_send_json_success([
+            'logs' => $logs,
+            'pagination' => [
+                'page' => $page,
+                'per_page' => $per_page,
+                'total' => intval($total),
+                'total_pages' => ceil($total / $per_page)
+            ]
+        ]);
     }
 
     public function handle_export_logs_csv() {
         check_ajax_referer('spb_admin_nonce', 'nonce');
-        if (!current_user_can('manage_options')) wp_die('Unauthorized', 403);
+        if (!current_user_can('manage_options')) wp_send_json_error('Unauthorized', 403);
 
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
         $date_from = isset($_POST['dateFrom']) ? sanitize_text_field($_POST['dateFrom']) : '';
@@ -693,35 +786,37 @@ if (hash_equals($signature, $computed)) {
             $logs = $wpdb->get_results($query);
         }
 
-        // Generate CSV
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="spb-logs-' . date('Y-m-d') . '.csv"');
-
-        $output = fopen('php://output', 'w');
+        // Generate CSV content
+        $csv_content = '';
         
         // Headers
-        fputcsv($output, ['ID', 'API Key Name', 'Endpoint', 'Status', 'Status Code', 'Pages Created', 
-                          'IP Address', 'Response Time (ms)', 'Webhook Status', 'Error Details', 'Timestamp']);
+        $headers = ['ID', 'API Key Name', 'Endpoint', 'Status', 'Status Code', 'Pages Created', 
+                    'IP Address', 'Response Time (ms)', 'Webhook Status', 'Error Details', 'Timestamp'];
+        $csv_content .= implode(',', array_map(function($field) {
+            return '"' . str_replace('"', '""', $field) . '"';
+        }, $headers)) . "\n";
 
         // Data
         foreach ($logs as $log) {
-            fputcsv($output, [
+            $row = [
                 $log->id,
-                $log->api_key_name,
+                $log->api_key_name ?: '',
                 $log->endpoint,
                 $log->status,
                 $log->status_code,
                 $log->pages_created,
                 $log->ip_address,
                 round($log->response_time, 2),
-                $log->webhook_status,
-                $log->error_details,
+                $log->webhook_status ?: 'SKIPPED',
+                $log->error_details ?: '',
                 $log->created_at
-            ]);
+            ];
+            $csv_content .= implode(',', array_map(function($field) {
+                return '"' . str_replace('"', '""', $field) . '"';
+            }, $row)) . "\n";
         }
 
-        fclose($output);
-        exit;
+        wp_send_json_success(['csv' => $csv_content]);
     }
 
     public function handle_get_created_pages() {

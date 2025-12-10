@@ -45,14 +45,21 @@ class SimplePageBuilder_API {
             return new WP_Error('invalid_key', 'Invalid API Key', ['status' => 403]);
         }
 
-        // 4. Status Check
-        if ($key_record->status !== 'ACTIVE') {
-            return new WP_Error('revoked_key', 'API Key is revoked', ['status' => 403]);
+        // 4. Expiration Check (check before status to auto-update expired keys)
+        if ($key_record->expires_at && strtotime($key_record->expires_at) < time()) {
+            // Auto-update status to EXPIRED if not already set
+            if ($key_record->status === 'ACTIVE') {
+                global $wpdb;
+                $wpdb->update($wpdb->prefix . 'spb_api_keys', ['status' => 'EXPIRED'], ['id' => $key_record->id]);
+                $key_record->status = 'EXPIRED';
+            }
+            return new WP_Error('expired_key', 'API Key has expired', ['status' => 403]);
         }
 
-        // 5. Expiration Check
-        if ($key_record->expires_at && strtotime($key_record->expires_at) < time()) {
-            return new WP_Error('expired_key', 'API Key has expired', ['status' => 403]);
+        // 5. Status Check
+        if ($key_record->status !== 'ACTIVE') {
+            $error_message = $key_record->status === 'REVOKED' ? 'API Key is revoked' : 'API Key is ' . strtolower($key_record->status);
+            return new WP_Error('invalid_key_status', $error_message, ['status' => 403]);
         }
 
         // 6. Permission Check
