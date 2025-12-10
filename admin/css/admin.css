@@ -252,6 +252,16 @@
     color: #fff;
 }
 
+.spb-button-warning {
+    background: #dba617;
+    color: #fff;
+}
+
+.spb-button-warning:hover {
+    background: #c2950e;
+    color: #fff;
+}
+
 .spb-button-small {
     padding: 6px 12px;
     font-size: 13px;
@@ -585,6 +595,20 @@
     margin: 16px 0;
 }
 
+/* Pre tags inside form groups (like in Documentation tab) */
+.spb-form-group pre {
+    background: #1d2327 !important;
+    color: #f0f0f1;
+    border-radius: 6px;
+    padding: 16px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+    display: block;
+    margin: 16px 0;
+}
+
 .spb-tab-content code {
     display: inline;
     padding: 2px 6px;
@@ -596,6 +620,13 @@
 }
 
 .spb-tab-content pre code {
+    display: block;
+    padding: 0;
+    background: transparent;
+    color: #f0f0f1;
+}
+
+.spb-form-group pre code {
     display: block;
     padding: 0;
     background: transparent;

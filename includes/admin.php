@@ -296,7 +296,11 @@ class SimplePageBuilder_Admin {
                     <div class="spb-form-group">
                         <label for="spb-webhook-secret">Secret Key</label>
                         <div style="display: flex; gap: 12px; align-items: center;">
-                            <input type="password" id="spb-webhook-secret" name="webhookSecret" value="<?php echo esc_attr($webhook_secret); ?>" placeholder="Your webhook secret" style="flex: 1;">
+                            <div style="position: relative; flex: 1;">
+                                <input type="password" id="spb-webhook-secret" name="webhookSecret" value="<?php echo esc_attr($webhook_secret); ?>" placeholder="Your webhook secret" style="padding-right: 80px; width: 100%;">
+                                <button type="button" id="spb-toggle-secret" class="spb-button spb-button-secondary" style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); padding: 6px 12px; font-size: 12px; min-width: auto; border-radius: 4px;">👁️</button>
+                                <button type="button" id="spb-copy-secret" class="spb-button spb-button-secondary" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 6px 12px; font-size: 12px; min-width: auto; border-radius: 4px;" data-copy-target="spb-webhook-secret">📋</button>
+                            </div>
                             <button type="button" id="spb-regenerate-secret" class="spb-button spb-button-secondary">Regenerate</button>
                         </div>
                         <p class="description">Secret key for HMAC-SHA256 signature verification</p>
@@ -359,12 +363,12 @@ class SimplePageBuilder_Admin {
             <div class="spb-form-group">
                 <h3>Authentication</h3>
                 <p>All requests must include an API key in the Authorization header:</p>
-                <pre style="background: #f6f7f7; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>Authorization: Bearer YOUR_API_KEY_HERE</code></pre>
+                <pre><code>Authorization: Bearer YOUR_API_KEY_HERE</code></pre>
             </div>
 
             <div class="spb-form-group">
                 <h3>cURL Example</h3>
-                <pre style="background: #f6f7f7; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>curl -X POST <?php echo esc_html($api_endpoint); ?> \
+                <pre><code>curl -X POST <?php echo esc_html($api_endpoint); ?> \
   -H "Authorization: Bearer YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
   -d '{
@@ -385,7 +389,7 @@ class SimplePageBuilder_Admin {
 
             <div class="spb-form-group">
                 <h3>Request Body</h3>
-                <pre style="background: #f6f7f7; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>{
+                <pre><code>{
   "pages": [
     {
       "title": "Page Title (required)",
@@ -398,7 +402,7 @@ class SimplePageBuilder_Admin {
 
             <div class="spb-form-group">
                 <h3>Response Example</h3>
-                <pre style="background: #f6f7f7; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>{
+                <pre><code>{
   "success": true,
   "pages": [
     {
@@ -414,7 +418,7 @@ class SimplePageBuilder_Admin {
             <div class="spb-form-group">
                 <h3>Webhook Notifications</h3>
                 <p>When pages are created, a POST request is sent to your configured webhook URL with the following payload:</p>
-                <pre style="background: #f6f7f7; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>{
+                <pre><code>{
   "event": "pages_created",
   "timestamp": "2025-10-07T14:30:00Z",
   "request_id": "req_abc123xyz",
@@ -430,7 +434,7 @@ class SimplePageBuilder_Admin {
 }</code></pre>
                 <p><strong>Webhook Signature Verification:</strong></p>
                 <p>The webhook includes an <code>X-Webhook-Signature</code> header with an HMAC-SHA256 signature. Verify it using your webhook secret:</p>
-                <pre style="background: #f6f7f7; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>// PHP Example
+                <pre><code>// PHP Example
 $payload = file_get_contents('php://input');
 $signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'];
 $secret = 'your_webhook_secret';
@@ -535,8 +539,38 @@ if (hash_equals($signature, $computed)) {
         if (!current_user_can('manage_options')) wp_send_json_error('Unauthorized', 403);
 
         $id = intval($_POST['id']);
+        $action = isset($_POST['action_type']) ? sanitize_text_field($_POST['action_type']) : 'revoke';
+        
         global $wpdb;
-        $wpdb->update($wpdb->prefix . 'spb_api_keys', ['status' => 'REVOKED'], ['id' => $id]);
+        $new_status = $action === 'restore' ? 'ACTIVE' : 'REVOKED';
+        $wpdb->update($wpdb->prefix . 'spb_api_keys', ['status' => $new_status], ['id' => $id]);
+        
+        $message = $action === 'restore' ? 'API key restored successfully' : 'API key revoked successfully';
+        wp_send_json_success(['message' => $message]);
+    }
+
+    public function handle_delete_key() {
+        check_ajax_referer('spb_admin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Unauthorized', 403);
+
+        $id = intval($_POST['id']);
+        global $wpdb;
+        
+        // Only allow deletion of revoked keys
+        $key = $wpdb->get_row($wpdb->prepare("SELECT status FROM {$wpdb->prefix}spb_api_keys WHERE id = %d", $id));
+        if (!$key) {
+            wp_send_json_error('Key not found', 404);
+        }
+        
+        if ($key->status !== 'REVOKED') {
+            wp_send_json_error('Only revoked keys can be deleted', 400);
+        }
+        
+        $deleted = $wpdb->delete($wpdb->prefix . 'spb_api_keys', ['id' => $id], ['%d']);
+        
+        if ($deleted === false) {
+            wp_send_json_error('Failed to delete key', 500);
+        }
         
         wp_send_json_success();
     }

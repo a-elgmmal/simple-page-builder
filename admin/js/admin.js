@@ -78,6 +78,12 @@
             // Regenerate Secret
             $(document).on('click', '#spb-regenerate-secret', this.handleRegenerateSecret);
             
+            // Toggle Secret Visibility
+            $(document).on('click', '#spb-toggle-secret', this.handleToggleSecret);
+            
+            // Copy Secret
+            $(document).on('click', '#spb-copy-secret', this.handleCopySecret);
+            
             // Refresh Pages
             $(document).on('click', '#spb-refresh-pages', function() {
                 SPB.loadCreatedPages();
@@ -184,6 +190,45 @@
             $('#spb-webhook-secret').val(newSecret);
             SPB.showAlert('success', 'Webhook secret regenerated. Don\'t forget to save!');
         },
+        
+        // Toggle Secret Visibility
+        handleToggleSecret: function(e) {
+            e.preventDefault();
+            const input = $('#spb-webhook-secret');
+            const button = $(this);
+            
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                button.text('🙈');
+            } else {
+                input.attr('type', 'password');
+                button.text('👁️');
+            }
+        },
+        
+        // Copy Secret
+        handleCopySecret: function(e) {
+            e.preventDefault();
+            const targetId = $(this).data('copy-target');
+            const input = $('#' + targetId);
+            const text = input.val();
+            
+            if (!text) {
+                SPB.showAlert('error', 'No secret to copy');
+                return;
+            }
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function() {
+                    SPB.showAlert('success', 'Secret copied to clipboard!');
+                });
+            } else {
+                // Fallback for older browsers
+                input.select();
+                document.execCommand('copy');
+                SPB.showAlert('success', 'Secret copied to clipboard!');
+            }
+        },
 
         // Show Generated Key
         showGeneratedKey: function(data) {
@@ -212,20 +257,24 @@
             $('body').append(modal);
         },
 
-        // Revoke Key
+        // Revoke/Restore Key
         handleRevokeKey: function(e) {
             e.preventDefault();
             
-            if (!confirm('Are you sure you want to revoke this API key? This action cannot be undone.')) {
+            const keyId = $(this).data('key-id');
+            const isRevoke = $(this).hasClass('spb-revoke-key');
+            const action = isRevoke ? 'revoke' : 'restore';
+            const actionText = isRevoke ? 'revoke' : 'restore';
+            
+            if (!confirm('Are you sure you want to ' + actionText + ' this API key?')) {
                 return;
             }
 
-            const keyId = $(this).data('key-id');
-            
             SPB.ajax('spb_revoke_key', {
-                id: keyId
-            }, function() {
-                SPB.showAlert('success', 'API key revoked successfully');
+                id: keyId,
+                action_type: action
+            }, function(response) {
+                SPB.showAlert('success', response.data && response.data.message ? response.data.message : 'API key ' + actionText + 'd successfully');
                 SPB.loadApiKeys();
             });
         },
@@ -330,9 +379,6 @@
 
         // Show Key Details
         showKeyDetails: function(data) {
-            const deleteButton = data.status === 'REVOKED' ? 
-                '<button class="spb-delete-key spb-button spb-button-danger" data-key-id="' + data.id + '" style="margin-top: 20px;">Delete Key</button>' : '';
-            
             const modal = $('<div class="spb-modal-overlay active">' +
                 '<div class="spb-modal">' +
                 '<div class="spb-modal-header">' +
@@ -368,7 +414,6 @@
                 '<label>Request Count:</label>' +
                 '<div>' + data.request_count + '</div>' +
                 '</div>' +
-                deleteButton +
                 '</div>' +
                 '</div>' +
                 '</div>');
@@ -406,7 +451,9 @@
                 row.append('<td><span class="spb-badge spb-badge-' + (key.status === 'ACTIVE' ? 'success' : 'danger') + '">' + key.status + '</span></td>');
                 row.append('<td style="white-space: nowrap;">' +
                     '<button class="spb-view-details spb-button spb-button-small" data-key-id="' + key.id + '" style="margin-right: 8px;">Details</button>' +
-                    (key.status === 'ACTIVE' ? '<button class="spb-revoke-key spb-button spb-button-danger spb-button-small" data-key-id="' + key.id + '">Revoke</button>' : 
+                    (key.status === 'ACTIVE' ? 
+                     '<button class="spb-revoke-key spb-button spb-button-warning spb-button-small" data-key-id="' + key.id + '">Revoke</button>' : 
+                     '<button class="spb-revoke-key spb-restore-key spb-button spb-button-secondary spb-button-small" data-key-id="' + key.id + '" style="margin-right: 8px;">Restore</button>' +
                      '<button class="spb-delete-key spb-button spb-button-danger spb-button-small" data-key-id="' + key.id + '">Delete</button>') +
                     '</td>');
                 tbody.append(row);
