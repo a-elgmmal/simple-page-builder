@@ -280,16 +280,16 @@
                 id: keyId,
                 action_type: action
             }, function(response) {
-                if (action === 'regenerate' && response.data && response.data.key) {
+                // response is already the data object from wp_send_json_success
+                if (action === 'regenerate' && response && response.key) {
                     // Show the new key in a modal (same as generate)
                     SPB.showGeneratedKey({
-                        key: response.data.key,
-                        prefix: response.data.prefix,
-                        name: response.data.name || 'Regenerated Key'
+                        key: response.key,
+                        prefix: response.prefix,
+                        name: response.name || 'Regenerated Key'
                     });
-                }
-                const message = response.data && response.data.message ? response.data.message : 'API key ' + actionText + 'd successfully';
-                if (action !== 'regenerate') {
+                } else {
+                    const message = (response && response.message) ? response.message : 'API key ' + actionText + 'd successfully';
                     SPB.showAlert('success', message);
                 }
                 SPB.loadApiKeys();
@@ -494,7 +494,9 @@
                     '<button class="spb-view-details spb-button spb-button-small" data-key-id="' + key.id + '" style="margin-right: 8px;">Details</button>' +
                     (key.status === 'ACTIVE' ? 
                      '<button class="spb-revoke-key spb-button spb-button-warning spb-button-small" data-key-id="' + key.id + '">Revoke</button>' : 
-                     '<button class="spb-revoke-key spb-regenerate-key spb-button spb-button-secondary spb-button-small" data-key-id="' + key.id + '">Regenerate</button>') +
+                     (key.status === 'REVOKED' ? 
+                      '<button class="spb-revoke-key spb-regenerate-key spb-button spb-button-secondary spb-button-small" data-key-id="' + key.id + '">Regenerate</button>' : 
+                      '')) +
                     '</td>');
                 tbody.append(row);
             });

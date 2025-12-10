@@ -623,12 +623,17 @@ if (hash_equals($signature, $computed)) {
         if ($action === 'regenerate') {
             // Get existing key data to preserve
             $old_key = $wpdb->get_row($wpdb->prepare(
-                "SELECT name, expires_at, created_at, last_used FROM {$wpdb->prefix}spb_api_keys WHERE id = %d",
+                "SELECT name, expires_at, created_at, last_used, status FROM {$wpdb->prefix}spb_api_keys WHERE id = %d",
                 $id
             ));
             
             if (!$old_key) {
                 wp_send_json_error('Key not found', 404);
+            }
+            
+            // Don't allow regenerating expired keys
+            if ($old_key->status === 'EXPIRED') {
+                wp_send_json_error('Cannot regenerate expired keys', 400);
             }
             
             // Generate new API key
@@ -637,6 +642,8 @@ if (hash_equals($signature, $computed)) {
             $hash = wp_hash_password($new_key);
             
             // Update with new key but keep same name, expiration, created date, last used
+            // Only update: api_key_hash, prefix, status (to ACTIVE), request_count (reset)
+            // DO NOT update: name, expires_at, created_at, last_used
             $wpdb->update(
                 $wpdb->prefix . 'spb_api_keys',
                 [
@@ -651,7 +658,6 @@ if (hash_equals($signature, $computed)) {
             );
             
             wp_send_json_success([
-                'message' => 'API key regenerated successfully',
                 'key' => $new_key, // Show once in modal
                 'prefix' => $prefix,
                 'name' => $old_key->name
