@@ -65,6 +65,8 @@ class SimplePageBuilder_DB {
         add_option('spb_rate_limit', 100);
         add_option('spb_api_enabled', 'yes');
         add_option('spb_key_expiration_default', 'never'); // Options: 30, 60, 90, never
+        add_option('spb_jwt_enabled', 'yes'); // Enable JWT authentication
+        add_option('spb_jwt_expiration', 3600); // JWT token expiration in seconds (default: 1 hour)
     }
 
     public static function deactivate() {

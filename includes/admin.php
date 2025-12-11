@@ -358,6 +358,42 @@ class SimplePageBuilder_Admin {
                     </div>
                 </div>
 
+                <div class="spb-card">
+                    <div class="spb-card-header">
+                        <h3 class="spb-card-title">JWT Authentication</h3>
+                    </div>
+                    <div class="spb-form-group">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <span class="spb-toggle-switch">
+                                <input type="checkbox" id="spb-jwt-enabled" name="isJwtEnabled" <?php checked(get_option('spb_jwt_enabled', 'yes') === 'yes'); ?>>
+                                <span class="spb-toggle-slider"></span>
+                            </span>
+                            <span>Enable JWT Token Authentication</span>
+                        </label>
+                        <p class="description" style="margin-left: 56px;">Allow clients to exchange API keys for JWT tokens</p>
+                    </div>
+
+                    <div class="spb-form-group">
+                        <label for="spb-jwt-expiration">JWT Token Expiration</label>
+                        <select id="spb-jwt-expiration" name="jwtExpiration">
+                            <?php 
+                            $jwt_expiration = get_option('spb_jwt_expiration', 3600);
+                            $options = [
+                                1800 => '30 minutes',
+                                3600 => '1 hour',
+                                7200 => '2 hours',
+                                14400 => '4 hours',
+                                86400 => '24 hours'
+                            ];
+                            foreach ($options as $value => $label) {
+                                echo '<option value="' . esc_attr($value) . '" ' . selected($jwt_expiration, $value, false) . '>' . esc_html($label) . '</option>';
+                            }
+                            ?>
+                        </select>
+                        <p class="description">How long JWT tokens remain valid after generation</p>
+                    </div>
+                </div>
+
                 <div style="text-align: right; margin-top: 24px;">
                     <button type="submit" class="spb-button">Save Changes</button>
                 </div>
@@ -380,12 +416,66 @@ class SimplePageBuilder_Admin {
 
             <div class="spb-form-group">
                 <h3>Authentication</h3>
-                <p>All requests must include an API key in the Authorization header:</p>
+                <p>The API supports two authentication methods:</p>
+                <ol>
+                    <li><strong>API Key Authentication</strong> - Use your API key directly</li>
+                    <li><strong>JWT Token Authentication</strong> - Exchange your API key for a JWT token (if enabled)</li>
+                </ol>
+                <p>All requests must include the authentication token in the Authorization header:</p>
                 <div class="spb-code-block-wrapper">
                     <button class="spb-copy-code-button" data-copy-target="auth-header-code" title="Copy to clipboard">📋 Copy</button>
-                    <pre id="auth-header-code"><code>Authorization: Bearer YOUR_API_KEY_HERE</code></pre>
+                    <pre id="auth-header-code"><code>Authorization: Bearer YOUR_API_KEY_OR_JWT_TOKEN</code></pre>
                 </div>
             </div>
+
+            <?php if (get_option('spb_jwt_enabled', 'yes') === 'yes'): ?>
+            <div class="spb-form-group">
+                <h3>JWT Token Authentication</h3>
+                <p>You can exchange your API key for a JWT token, which provides time-limited access. This is useful for stateless authentication in distributed systems.</p>
+                
+                <h4>Step 1: Generate JWT Token</h4>
+                <p>Use your API key to request a JWT token:</p>
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="jwt-token-request-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="jwt-token-request-code"><code>curl -X POST <?php echo esc_html($site_url); ?>/wp-json/pagebuilder/v1/auth/token \
+  -H "Authorization: Bearer YOUR_API_KEY_HERE" \
+  -H "Content-Type: application/json"</code></pre>
+                </div>
+                
+                <h4>Step 2: Use JWT Token</h4>
+                <p>The response will include a JWT token. Use it in subsequent requests:</p>
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="jwt-token-response-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="jwt-token-response-code"><code>{
+  "success": true,
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "expires_at": "2025-01-15T14:30:00+00:00"
+}</code></pre>
+                </div>
+                
+                <h4>Step 3: Make API Requests with JWT</h4>
+                <p>Use the JWT token instead of your API key:</p>
+                <div class="spb-code-block-wrapper">
+                    <button class="spb-copy-code-button" data-copy-target="jwt-usage-code" title="Copy to clipboard">📋 Copy</button>
+                    <pre id="jwt-usage-code"><code>curl -X POST <?php echo esc_html($api_endpoint); ?> \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pages": [
+      {
+        "title": "About Us",
+        "content": "&lt;h1&gt;Welcome&lt;/h1&gt;",
+        "status": "publish"
+      }
+    ]
+  }'</code></pre>
+                </div>
+                
+                <p><strong>Note:</strong> JWT tokens expire after a configured period (default: 1 hour). When expired, generate a new token using your API key.</p>
+            </div>
+            <?php endif; ?>
 
             <div class="spb-form-group">
                 <h3>cURL Example</h3>
@@ -882,6 +972,14 @@ if (hash_equals($signature, $computed)) {
         update_option('spb_rate_limit', intval($settings['rateLimit']));
         update_option('spb_api_enabled', $settings['isApiEnabled'] === 'true' || $settings['isApiEnabled'] === true ? 'yes' : 'no');
         update_option('spb_key_expiration_default', sanitize_text_field($settings['expirationDefault']));
+        
+        // JWT Settings
+        if (isset($settings['isJwtEnabled'])) {
+            update_option('spb_jwt_enabled', $settings['isJwtEnabled'] === 'true' || $settings['isJwtEnabled'] === true ? 'yes' : 'no');
+        }
+        if (isset($settings['jwtExpiration'])) {
+            update_option('spb_jwt_expiration', intval($settings['jwtExpiration']));
+        }
 
         wp_send_json_success();
     }

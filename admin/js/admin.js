@@ -307,7 +307,9 @@
                 webhookSecret: form.find('#spb-webhook-secret').val(),
                 rateLimit: form.find('#spb-rate-limit').val(),
                 isApiEnabled: form.find('#spb-api-enabled').is(':checked'),
-                expirationDefault: form.find('#spb-expiration-default').val()
+                expirationDefault: form.find('#spb-expiration-default').val(),
+                isJwtEnabled: form.find('#spb-jwt-enabled').is(':checked'),
+                jwtExpiration: form.find('#spb-jwt-expiration').val()
             };
 
             SPB.ajax('spb_save_settings', {

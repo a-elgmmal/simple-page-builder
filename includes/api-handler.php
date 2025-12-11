@@ -6,6 +6,14 @@ class SimplePageBuilder_API {
     }
 
     public function register_routes() {
+        // Token generation endpoint (requires API key)
+        register_rest_route('pagebuilder/v1', '/auth/token', [
+            'methods' => 'POST',
+            'callback' => [$this, 'generate_token'],
+            'permission_callback' => [$this, 'check_api_key_auth'],
+        ]);
+        
+        // Create pages endpoint (supports both API key and JWT)
         register_rest_route('pagebuilder/v1', '/create-pages', [
             'methods' => 'POST',
             'callback' => [$this, 'create_pages'],
@@ -14,7 +22,7 @@ class SimplePageBuilder_API {
     }
 
     /**
-     * Authentication Middleware
+     * Authentication Middleware - Supports both API Keys and JWT Tokens
      */
     public function check_auth($request) {
         // 1. Global Kill Switch
@@ -29,6 +37,89 @@ class SimplePageBuilder_API {
         }
 
         $token = substr($auth_header, 7);
+        
+        // 3. Try JWT authentication first (if enabled)
+        if (get_option('spb_jwt_enabled') === 'yes') {
+            $jwt_result = $this->check_jwt_auth($token);
+            if (!is_wp_error($jwt_result)) {
+                // JWT authentication successful
+                $request->set_param('api_key_record', $jwt_result);
+                return true;
+            }
+            // If JWT fails, fall through to API key authentication
+        }
+        
+        // 4. Try API Key authentication
+        $api_key_result = $this->check_api_key_auth($request);
+        if (!is_wp_error($api_key_result)) {
+            return true;
+        }
+        
+        // Both authentication methods failed
+        return new WP_Error('invalid_auth', 'Invalid authentication token or API key', ['status' => 401]);
+    }
+    
+    /**
+     * Check JWT Token Authentication
+     */
+    private function check_jwt_auth($token) {
+        $secret = SimplePageBuilder_JWT::get_secret();
+        $payload = SimplePageBuilder_JWT::decode($token, $secret);
+        
+        if (is_wp_error($payload)) {
+            return $payload;
+        }
+        
+        // Extract API key ID from JWT payload
+        if (!isset($payload['key_id'])) {
+            return new WP_Error('invalid_token', 'Token missing key_id', ['status' => 401]);
+        }
+        
+        // Get the API key record
+        global $wpdb;
+        $key_record = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}spb_api_keys WHERE id = %d",
+            intval($payload['key_id'])
+        ));
+        
+        if (!$key_record) {
+            return new WP_Error('invalid_token', 'Token references invalid API key', ['status' => 401]);
+        }
+        
+        // Check if key is still active
+        if ($key_record->status !== 'ACTIVE') {
+            return new WP_Error('invalid_key_status', 'API key associated with token is not active', ['status' => 403]);
+        }
+        
+        // Check expiration
+        if ($key_record->expires_at && strtotime($key_record->expires_at) < time()) {
+            return new WP_Error('expired_key', 'API key associated with token has expired', ['status' => 403]);
+        }
+        
+        // Check permissions
+        if ($key_record->permissions === 'read') {
+            return new WP_Error('insufficient_permissions', 'This key does not have write permissions', ['status' => 403]);
+        }
+        
+        // Rate limit check
+        $rate_limit = (int) get_option('spb_rate_limit', 100);
+        if ($this->is_rate_limited($key_record->id, $rate_limit)) {
+            return new WP_Error('rate_limit', 'Rate limit exceeded', ['status' => 429]);
+        }
+        
+        return $key_record;
+    }
+    
+    /**
+     * Check API Key Authentication (original method)
+     */
+    public function check_api_key_auth($request) {
+        $auth_header = $request->get_header('authorization');
+        if (!$auth_header || !str_starts_with($auth_header, 'Bearer ')) {
+            return new WP_Error('no_auth', 'Missing or invalid Authorization Header', ['status' => 401]);
+        }
+
+        $token = substr($auth_header, 7);
         $prefix = substr($token, 0, 8);
         
         global $wpdb;
@@ -36,7 +127,7 @@ class SimplePageBuilder_API {
         
         $key_record = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE prefix = %s", $prefix));
 
-        // 3. Key Validation
+        // Key Validation
         if (!$key_record) {
             return new WP_Error('invalid_key', 'Invalid API Key', ['status' => 403]);
         }
@@ -45,33 +136,30 @@ class SimplePageBuilder_API {
             return new WP_Error('invalid_key', 'Invalid API Key', ['status' => 403]);
         }
 
-        // 4. Expiration Check (check before status to auto-update expired keys)
+        // Expiration Check
         if ($key_record->expires_at && strtotime($key_record->expires_at) < time()) {
-            // Auto-update status to EXPIRED if not already set
             if ($key_record->status === 'ACTIVE') {
-                global $wpdb;
                 $wpdb->update($wpdb->prefix . 'spb_api_keys', ['status' => 'EXPIRED'], ['id' => $key_record->id]);
                 $key_record->status = 'EXPIRED';
             }
             return new WP_Error('expired_key', 'API Key has expired', ['status' => 403]);
         }
 
-        // 5. Status Check
+        // Status Check
         if ($key_record->status !== 'ACTIVE') {
             $error_message = $key_record->status === 'REVOKED' ? 'API Key is revoked' : 'API Key is ' . strtolower($key_record->status);
             return new WP_Error('invalid_key_status', $error_message, ['status' => 403]);
         }
 
-        // 6. Permission Check
+        // Permission Check
         if ($key_record->permissions === 'read') {
              return new WP_Error('insufficient_permissions', 'This key does not have write permissions', ['status' => 403]);
         }
         
-        // 7. Rate Limit Check
+        // Rate Limit Check
         $rate_limit = (int) get_option('spb_rate_limit', 100);
         if ($this->is_rate_limited($key_record->id, $rate_limit)) {
-            // Log the rate limit error
-            $this->log_request($key_record, '/create-pages', 'FAILED', 429, 0, microtime(true), 'Rate limit exceeded');
+            $this->log_request($key_record, $request->get_route(), 'FAILED', 429, 0, microtime(true), 'Rate limit exceeded');
             return new WP_Error('rate_limit', 'Rate limit exceeded', ['status' => 429]);
         }
 
@@ -79,6 +167,50 @@ class SimplePageBuilder_API {
         $request->set_param('api_key_record', $key_record);
         
         return true;
+    }
+    
+    /**
+     * Generate JWT Token Endpoint
+     * Requires valid API key to generate JWT token
+     */
+    public function generate_token($request) {
+        $start_time = microtime(true);
+        $key_record = $request->get_param('api_key_record');
+        
+        if (!$key_record) {
+            return new WP_Error('unauthorized', 'Valid API key required to generate token', ['status' => 401]);
+        }
+        
+        // Generate JWT token
+        $secret = SimplePageBuilder_JWT::get_secret();
+        $expiration = SimplePageBuilder_JWT::get_expiration();
+        
+        $payload = [
+            'key_id' => $key_record->id,
+            'key_name' => $key_record->name,
+            'permissions' => $key_record->permissions
+        ];
+        
+        $jwt_token = SimplePageBuilder_JWT::encode($payload, $secret, $expiration);
+        
+        // Update stats
+        global $wpdb;
+        $wpdb->query($wpdb->prepare(
+            "UPDATE {$wpdb->prefix}spb_api_keys SET request_count = request_count + 1, last_used = %s WHERE id = %d",
+            current_time('mysql'),
+            $key_record->id
+        ));
+        
+        // Log request
+        $this->log_request($key_record, '/auth/token', 'SUCCESS', 200, 0, $start_time);
+        
+        return new WP_REST_Response([
+            'success' => true,
+            'token' => $jwt_token,
+            'token_type' => 'Bearer',
+            'expires_in' => $expiration,
+            'expires_at' => date('c', time() + $expiration)
+        ], 200);
     }
 
     /**
