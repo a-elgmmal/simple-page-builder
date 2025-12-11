@@ -1,0 +1,1343 @@
+{
+	"info": {
+		"_postman_id": "66d2479e-0f1d-4afb-95e6-0524d697fcae",
+		"name": "Simple Page Builder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39954974"
+	},
+	"item": [
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer eed99cba674d1a2b0c8560e0ff698b126eb21f7cd2343352d342142b15db8d2a",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 419d9ab2d7dc7ad6747b976415e8ae7f447c7b65f1636c2f2137d39503bf852b",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer eed99cba674d1a2b0c8560e0ff698b126eb21f7cd2343352d342142b15db8d2a",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Beasrer eed99cba674d1a2b0c8560e0ff698b126eb21f7cd2343352d342142b15db8d2a",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer eed99cba674d1a2b0c8560e0ff698b126eb21f7cd2343352d342142b15db8d2a",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer eed99cba674d1a2b0c8560e0ff698b126eb21f7cd2343352d342142b15db8d2a",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer eed99cba674d1a2b0c8560e0ff698b126eb21f7cd2343352d342142b15db8d2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer eed99cba674d1a2b0c8560e0ff698b126eb21f7cd2343352d342142b15db8d2a",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer eed99cba674d1a2b0c8560e0ff698b126eb21f7cd2343352d342142b15db8d2a",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJrZXlfaWQiOiIyMyIsImtleV9uYW1lIjoicXd3IiwicGVybWlzc2lvbnMiOiJyZWFkX3dyaXRlIiwiaWF0IjoxNzY1NDkzNTQ3LCJleHAiOjE3NjU0OTUzNDcsIm5iZiI6MTc2NTQ5MzU0N30.GVDn8QqrfABcK2kaZXZOV24rQxHfWLgzGebEXaw3LBk",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"pages\": [\r\n    {\r\n      \"title\": \"JWT\",\r\n      \"content\": \"<h1>Welcome</h1><p>This is the JWT page.</p>\",\r\n      \"status\": \"publish\"\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/auth/token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/auth/token",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"pages\": [\r\n    {\r\n      \"title\": \"enable access\",\r\n      \"content\": \"<h1>Welcome</h1><p>This is the about page.</p>\",\r\n      \"status\": \"publish\"\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": " Bearer 106ac3488e4f56651953c3fe204e31181a313560744f85825d3a566c7f864489",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"pages\": [\r\n    {\r\n      \"title\": \"disable access\",\r\n      \"content\": \"<h1>Welcome</h1><p>This is the about page.</p>\",\r\n      \"status\": \"publish\"\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://builder.local/wp-json/pagebuilder/v1/create-pages",
+					"protocol": "http",
+					"host": [
+						"builder",
+						"local"
+					],
+					"path": [
+						"wp-json",
+						"pagebuilder",
+						"v1",
+						"create-pages"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
